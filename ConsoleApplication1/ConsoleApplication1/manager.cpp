@@ -1,9 +1,10 @@
 #include "manager.h"
 #include "board.h"
+#include "measure.h"
 #include <fstream>
 #include <streambuf>
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 
 Manager::Manager()
 {
@@ -19,6 +20,7 @@ bool Manager::ParseIn(int argc, char *argv[])
 	bool result;
 	using namespace std;
 	Board board;
+	Measure mestime;
 	for (int i = 0; i < argc; i++)
 	{
 		string cmd(argv[i]);
@@ -39,33 +41,31 @@ bool Manager::ParseIn(int argc, char *argv[])
 		}
 		if (cmd == "--measure")
 		{
-
+			measure = 1;
 		}
 	}
 
-	start_time = Time::now();
+		if (measure) mestime.startMeasure();
 		result = board.LoadBoard(locationIn);
 		if (!result) false;
-	end_time = Time::now();
-	fsec fs = end_time - start_time;
-	cout << fs.count() << ": needed to complete File Read! \n";
+	if (measure) mestime.stopMeasure();
 	
-	start_time = Time::now();
-	for (int i = 0; i < generations; i++)
-	{
-		result = board.Calculate();
-		if (!result) return false;
-	}
-	end_time = Time::now();
-	fs = end_time - start_time;
-	cout << fs.count() << ": needed to complete Generations \n";
+	if (measure) mestime.startMeasure();
+		for (int i = 0; i < generations; i++)
+		{
+			result = board.Calculate();
+			if (!result) return false;
+		}
+	if (measure) mestime.stopMeasure();
 	
-	start_time = Time::now();
+	if (measure) mestime.startMeasure();
 		result = board.SaveBoard(locationOut);
 		if (!result) return false;
-	end_time = Time::now();
-	fs = end_time - start_time;
-	cout << fs.count() << ": needed to complete File Write \n";
+	if (measure)
+	{
+		mestime.stopMeasure();
+		mestime.saveMeasures("times.gol");
+	}
 	return true;
 }
 

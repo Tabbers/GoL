@@ -1,6 +1,4 @@
 #include "manager.h"
-#include <chrono>
-
 int main(int argc, char **argv)
 {	
 	Manager man;
