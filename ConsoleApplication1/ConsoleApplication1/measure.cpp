@@ -28,9 +28,13 @@ void Measure::saveMeasures(std::string Filename)
 {
 	using namespace std;
 	ofstream file;
+	string s;
+	file.open(Filename);
 	for (int i = 0; i < times.size(); i++)
 	{
-		file.put(times[i]);
+		s = to_string(times[i]);
+		file<<s;
 		file.put('\n');
 	}
+	file.close();
 }

@@ -25,14 +25,15 @@ bool Board::LoadBoard(std::string load)
 
 	file >> width >> trash >> height;
 	cout << width << "\n" << height << "\n";
-	board  = new Cell[width*height];
+	board  = new int[width*height];
+	board2 = new int[width*height];
 	getline(file, str);
 	// read character for character
 	while (getline(file, str))
 	{
 		for (char& c : str) 
 		{
-			board[i].alive = c == 'x';
+			board[i] = c == 'x';
 			i++;
 		}
 	}
@@ -42,7 +43,6 @@ bool Board::LoadBoard(std::string load)
 
 bool Board::Calculate()
 {
-	Cell* board2 = new Cell[width*height];
 	int lcnt;
 	int diffXR = 0;
 	int diffYD = 0;
@@ -63,33 +63,32 @@ bool Board::Calculate()
 			if (y == 0)			diffYU = height;
 			if (y == height-1)	diffYD = -height;
 			if (x == 0)			diffXL = width;
-			if (x == width-1)		diffXR = -width;
+			if (x == width-1)	diffXR = -width;
 
 
-			/*UL*/lcnt += board[x - 1 + diffXL + width*(y - 1 + diffYU)].alive;
-			/*U*/ lcnt += board[x +			  width*(y - 1 + diffYU)].alive;
-			/*UR*/lcnt += board[x + 1 + diffXR + width*(y - 1 + diffYU)].alive;
+			/*UL*/lcnt += board[x - 1 + diffXL + width*(y - 1 + diffYU)];
+			/*U*/ lcnt += board[x +			     width*(y - 1 + diffYU)];
+			/*UR*/lcnt += board[x + 1 + diffXR + width*(y - 1 + diffYU)];
 
-			/*L*/lcnt += board[x - 1 + diffXL + width*y].alive;
-			/*R*/lcnt += board[x + 1 + diffXR + width*y].alive;
+			/*L*/ lcnt += board[x - 1 + diffXL + width*y];
+			/*R*/ lcnt += board[x + 1 + diffXR + width*y];
 
-			/*DL*/lcnt += board[x - 1 + diffXL + width*(y + 1 + diffYD)].alive;
-			/*D*/ lcnt += board[x +			  width*(y + 1 + diffYD)].alive;
-			/*DR*/lcnt += board[x + 1 + diffXR + width*(y + 1 + diffYD)].alive;
+			/*DL*/lcnt += board[x - 1 + diffXL + width*(y + 1 + diffYD)];
+			/*D*/ lcnt += board[x +			     width*(y + 1 + diffYD)];
+			/*DR*/lcnt += board[x + 1 + diffXR + width*(y + 1 + diffYD)];
 
-			if(board[x+(width*y)].alive)
+			if(board[x+(width*y)])
 			{
-				if (lcnt <2 || lcnt > 3)   board2[x + (width*y)].alive = 0;
-				if (lcnt ==2 || lcnt == 3) board2[x + (width*y)].alive = 1;
+				if (lcnt <2  || lcnt > 3)   board2[x + (width*y)] = 0;
+				if (lcnt ==2 || lcnt == 3) board2[x + (width*y)] = 1;
 			}
 			else
 			{
-				if (lcnt == 3) board2[x + (width*y)].alive = 1;
+				if (lcnt == 3) board2[x + (width*y)] = 1;
 			}
 		}
 	}
 	Swap(board, board2);
-	delete[] board2;
 	return true;
 }
 
@@ -103,7 +102,7 @@ bool Board::SaveBoard(std::string load)
 		file.put('\n');
 		for (int x = 0; x < width; x++)
 		{
-			if(board[x + width*y].alive) file.put('x');
+			if(board[x + width*y]) file.put('x');
 			else  file.put('.');
 		}
 	}
@@ -111,10 +110,12 @@ bool Board::SaveBoard(std::string load)
 	return true;
 }
 
-void Board::Swap(Cell *&r, Cell *&s)
+void Board::Swap(int *&r, int *&s)
 {
-	Cell* temp = r;
+	int* temp = r;
 	r = s;
 	s = temp;
+
+	memcpy(s,r,sizeof(int)*width*height);
 	return;
 }

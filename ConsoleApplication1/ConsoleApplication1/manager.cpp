@@ -31,7 +31,7 @@ bool Manager::ParseIn(int argc, char *argv[])
 		}
 		if (cmd == "--generations")
 		{
-			generations =atoi(argv[i + 1]);
+			generations = std::atoi(argv[i + 1]);
 			cout << generations << ":Generations \n";
 		}
 		if (cmd == "--save")
@@ -45,7 +45,7 @@ bool Manager::ParseIn(int argc, char *argv[])
 		}
 	}
 
-		if (measure) mestime.startMeasure();
+	if (measure) mestime.startMeasure();
 		result = board.LoadBoard(locationIn);
 		if (!result) false;
 	if (measure) mestime.stopMeasure();

@@ -13,10 +13,11 @@ public:
 	bool Calculate();
 	bool SaveBoard(std::string);
 private:
-	void Swap(Cell*&,Cell*&);
+	void Swap(int*&,int*&);
 
 public:
-	Cell* board;
+	int* board;
+	int* board2;
 private:
 	int width, height;
 	int index = 0;
